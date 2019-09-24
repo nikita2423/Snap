@@ -1,10 +1,15 @@
 package com.example.snap;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,11 +33,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initializeRuntimePermission();
         captureImage = (Button)findViewById(R.id.capture_image_button);
         saveImage = (Button)findViewById(R.id.save_image_button);
         cameraImageView = (ImageView)findViewById(R.id.camera_image_view);
         captureImage.setOnClickListener(this);
         saveImage.setOnClickListener(this);
+    }
+
+
+    public void initializeRuntimePermission() {
+        int PERMISSION_ALL = 1;
+        String[] PERMISSION = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        if (!hasPermissions(this, PERMISSION)){
+            ActivityCompat.requestPermissions(this, PERMISSION, PERMISSION_ALL);
+        }else {
+
+        }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
